@@ -11,15 +11,15 @@ export default function AlertBadge({ quantity, threshold }: Props) {
       </span>
     );
   }
-  if (quantity <= threshold * 1.2) {
+  if (quantity <= Math.ceil(threshold * 1.5)) {
     return (
-      <span className="inline-flex items-center justify-center w-full h-full bg-amber-100 text-amber-700 font-semibold text-sm rounded">
+      <span className="inline-flex items-center justify-center w-full h-full bg-yellow-100 text-yellow-700 font-semibold text-sm rounded">
         {quantity}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center justify-center w-full h-full text-sm text-gray-700">
+    <span className="inline-flex items-center justify-center w-full h-full bg-green-100 text-green-700 font-semibold text-sm rounded">
       {quantity}
     </span>
   );

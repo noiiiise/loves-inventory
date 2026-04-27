@@ -122,10 +122,13 @@ export default function InventoryGrid({ locations, flavors, packSizes, stock, th
       {/* Legend */}
       <div className="flex gap-4 mt-3 text-xs text-gray-500">
         <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-3 rounded bg-red-200"></span> At or below threshold
+          <span className="inline-block w-3 h-3 rounded bg-green-200"></span> Well stocked
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block w-3 h-3 rounded bg-amber-200"></span> Within 20% of threshold
+          <span className="inline-block w-3 h-3 rounded bg-yellow-200"></span> Nearing reorder
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block w-3 h-3 rounded bg-red-200"></span> Reorder now
         </span>
       </div>
     </div>
