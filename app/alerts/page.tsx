@@ -1,7 +1,7 @@
 import { getAlerts, getLocations, getFlavors, getPackSizes } from "@/lib/inventory";
 import Link from "next/link";
 
-export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export default async function AlertsPage() {
   const [alerts, locations, flavors, packSizes] = await Promise.all([

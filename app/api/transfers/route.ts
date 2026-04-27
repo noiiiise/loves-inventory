@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { recordTransfer } from "@/lib/inventory";
 
 type TransferLine = { skuId: string; quantity: number };
@@ -26,6 +27,8 @@ export async function POST(req: Request) {
     );
 
     const flaggedCount = results.filter((r) => r.flagged).length;
+    revalidatePath("/");
+    revalidatePath("/alerts");
     return NextResponse.json({ results, flagged: flaggedCount });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal error";

@@ -2,7 +2,7 @@ import { getLocations, getFlavors, getPackSizes, getCurrentInventory, getThresho
 import InventoryGrid from "@/components/InventoryGrid";
 import Link from "next/link";
 
-export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const [locations, flavors, packSizes, stock, thresholds] = await Promise.all([

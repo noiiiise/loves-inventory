@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { recordCount } from "@/lib/inventory";
 
 type CountEntry = { skuId: string; quantity: number };
@@ -20,6 +21,8 @@ export async function POST(req: Request) {
       entries.map((e) => recordCount(locationId, e.skuId, e.quantity, initials, notes))
     );
 
+    revalidatePath("/");
+    revalidatePath("/alerts");
     return NextResponse.json({ ids });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Internal error";
