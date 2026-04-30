@@ -5,11 +5,12 @@
 -- record_count: authoritative snapshot from an employee
 -- Reads current system stock, writes inventory_counts + stock_movements delta
 create or replace function record_count(
-  p_location_id text,
-  p_sku_id      text,
-  p_quantity    int,
-  p_initials    text,
-  p_notes       text default null
+  p_location_id   text,
+  p_sku_id        text,
+  p_quantity      int,
+  p_initials      text,
+  p_notes         text default null,
+  p_submission_id uuid default null
 )
 returns uuid
 language plpgsql
@@ -32,8 +33,8 @@ begin
   v_delta := p_quantity - v_current;
 
   -- Write the verbatim count record
-  insert into inventory_counts (location_id, sku_id, counted_quantity, previous_system, recorded_by, notes)
-  values (p_location_id, p_sku_id, p_quantity, v_current, p_initials, p_notes)
+  insert into inventory_counts (location_id, sku_id, counted_quantity, previous_system, recorded_by, notes, submission_id)
+  values (p_location_id, p_sku_id, p_quantity, v_current, p_initials, p_notes, p_submission_id)
   returning id into v_count_id;
 
   -- Write the ledger delta (only if something changed)

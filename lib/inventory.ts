@@ -79,7 +79,8 @@ export async function recordCount(
   skuId: string,
   quantity: number,
   initials: string,
-  notes?: string
+  notes?: string,
+  submissionId?: string
 ): Promise<string> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any).rpc("record_count", {
@@ -88,6 +89,7 @@ export async function recordCount(
     p_quantity: quantity,
     p_initials: initials.toUpperCase().trim(),
     p_notes: notes ?? null,
+    p_submission_id: submissionId ?? null,
   });
   if (error) throw error;
   return data as string;
@@ -147,23 +149,26 @@ export type CountNote = {
   recorded_by: string;
   recorded_at: string;
   notes: string;
+  submission_id: string | null;
 };
 
 export async function getRecentCountNotes(): Promise<CountNote[]> {
   const { data, error } = await supabase
     .from("inventory_counts")
-    .select("id, location_id, recorded_by, recorded_at, notes")
+    .select("id, location_id, recorded_by, recorded_at, notes, submission_id")
     .not("notes", "is", null)
     .neq("notes", "")
     .order("recorded_at", { ascending: false })
     .limit(500);
   if (error) throw error;
 
-  // Each submission writes one row per SKU — deduplicate to one row per
-  // (location, initials, note, minute) so the log shows one entry per count.
+  // Each submission writes one row per SKU. Deduplicate to one row per submission.
+  // Rows with a submission_id deduplicate exactly; legacy rows fall back to minute+location+person.
   const seen = new Set<string>();
   return (data ?? []).filter((row) => {
-    const key = `${row.location_id}|${row.recorded_by}|${row.notes}|${row.recorded_at.slice(0, 16)}`;
+    const key = row.submission_id
+      ? row.submission_id
+      : `${row.location_id}|${row.recorded_by}|${row.recorded_at.slice(0, 16)}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;

@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { recordCount } from "@/lib/inventory";
@@ -17,8 +18,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const submissionId = randomUUID();
     const ids = await Promise.all(
-      entries.map((e) => recordCount(locationId, e.skuId, e.quantity, initials, notes))
+      entries.map((e) => recordCount(locationId, e.skuId, e.quantity, initials, notes, submissionId))
     );
 
     revalidatePath("/");

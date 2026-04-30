@@ -57,7 +57,8 @@ create table if not exists inventory_counts (
   previous_system   int  not null,
   recorded_by       text not null,
   recorded_at       timestamptz not null default now(),
-  notes             text
+  notes             text,
+  submission_id     uuid
 );
 
 create table if not exists transfers (
