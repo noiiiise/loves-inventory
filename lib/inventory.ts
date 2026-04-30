@@ -141,6 +141,26 @@ export async function toggleFlavorActive(flavorId: string, active: boolean): Pro
   if (error) throw error;
 }
 
+export type CountNote = {
+  id: string;
+  location_id: string;
+  recorded_by: string;
+  recorded_at: string;
+  notes: string;
+};
+
+export async function getRecentCountNotes(): Promise<CountNote[]> {
+  const { data, error } = await supabase
+    .from("inventory_counts")
+    .select("id, location_id, recorded_by, recorded_at, notes")
+    .not("notes", "is", null)
+    .neq("notes", "")
+    .order("recorded_at", { ascending: false })
+    .limit(50);
+  if (error) throw error;
+  return (data ?? []) as CountNote[];
+}
+
 export async function getAlerts(): Promise<
   Array<{ location_id: string; sku_id: string; quantity: number; min_quantity: number; shortfall: number }>
 > {

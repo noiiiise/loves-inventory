@@ -1,16 +1,18 @@
-import { getLocations, getFlavors, getPackSizes, getCurrentInventory, getThresholds } from "@/lib/inventory";
+import { getLocations, getFlavors, getPackSizes, getCurrentInventory, getThresholds, getRecentCountNotes } from "@/lib/inventory";
 import InventoryGrid from "@/components/InventoryGrid";
+import RecentNotes from "@/components/RecentNotes";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [locations, flavors, packSizes, stock, thresholds] = await Promise.all([
+  const [locations, flavors, packSizes, stock, thresholds, countNotes] = await Promise.all([
     getLocations(),
     getFlavors(),
     getPackSizes(),
     getCurrentInventory(),
     getThresholds(),
+    getRecentCountNotes(),
   ]);
 
   const alertCount = (() => {
@@ -56,6 +58,8 @@ export default async function DashboardPage() {
         stock={stock}
         thresholds={thresholds}
       />
+
+      <RecentNotes notes={countNotes} locations={locations} />
     </div>
   );
 }
