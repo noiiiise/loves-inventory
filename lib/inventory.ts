@@ -156,9 +156,18 @@ export async function getRecentCountNotes(): Promise<CountNote[]> {
     .not("notes", "is", null)
     .neq("notes", "")
     .order("recorded_at", { ascending: false })
-    .limit(50);
+    .limit(500);
   if (error) throw error;
-  return (data ?? []) as CountNote[];
+
+  // Each submission writes one row per SKU — deduplicate to one row per
+  // (location, initials, note, minute) so the log shows one entry per count.
+  const seen = new Set<string>();
+  return (data ?? []).filter((row) => {
+    const key = `${row.location_id}|${row.recorded_by}|${row.notes}|${row.recorded_at.slice(0, 16)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 50) as CountNote[];
 }
 
 export async function getAlerts(): Promise<
